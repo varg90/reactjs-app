@@ -1,8 +1,10 @@
 import { createServer } from 'miragejs';
-import users from './users';
+import quacksEndpoint from './quacks';
+import usersEndpoint from './users';
 
 export default function createMirage() {
   let server = createServer();
 
-  users(server);
+  usersEndpoint(server);
+  quacksEndpoint(server);
 }
