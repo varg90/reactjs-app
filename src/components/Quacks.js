@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client';
 import Quack from './Quack';
 import { gql } from 'graphql.macro';
+import { MAIN_USER_INFO } from '../fragments/MainUserInfo';
 
 const DELETE_QUACK = gql`
   mutation deleteQuack($id: ID!) {
@@ -10,16 +11,14 @@ const DELETE_QUACK = gql`
   }
 `;
 const QUACKS_QUERY = gql`
+  ${MAIN_USER_INFO}
   query QuacksQuery {
     quacks {
       id
       text
       user {
         id
-        avatarUrl
-        firstName
-        lastName
-        username
+        ...MainUserInfo
       }
     }
   }
