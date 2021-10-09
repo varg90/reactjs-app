@@ -29,16 +29,8 @@ function Quacks(props) {
   let { loading, error, data } = useQuery(QUACKS_QUERY);
 
   let [mutateFunction] = useMutation(DELETE_QUACK, {
-    update(
-      cache,
-      {
-        data: {
-          deleteQuack: { id },
-        },
-      }
-    ) {
-      const normalizedId = cache.identify({ id, __typename: 'Quack' });
-      cache.evict({ id: normalizedId });
+    update(cache, { data: { deleteQuack } }) {
+      cache.evict({ id: cache.identify(deleteQuack) });
       cache.gc();
     },
   });
