@@ -5,7 +5,7 @@ function Quack({ quack, removeQuack, isDeleting }) {
   return (
     <div className={`flex p-5 border-b border-l border-r ${isDeleting ? 'opacity-50' : ''}`}>
       <div className="flex-shrink-0">
-        <img src={quack.user.avatarUrl} className="rounded-full w-16 h-16" />
+        <img src={quack.user.avatarUrl} alt="avatar" className="rounded-full w-16 h-16" />
       </div>
       <div className="ml-3">
         <div className="flex">

@@ -1,0 +1,27 @@
+input QuackInput {
+  text: String
+}
+
+type User {
+  id: ID!
+  avatarUrl: String
+  firstName: String
+  lastName: String
+  username: String
+}
+
+type Quack {
+  id: ID!
+  text: String!
+  user: User
+}
+
+type Query {
+  quacks: [Quack]
+}
+
+type Mutation {
+  createQuack(input: QuackInput!): Quack
+  deleteQuack(id: ID!): Quack
+  updateQuack(id: ID!, input: QuackInput!): Quack
+}
