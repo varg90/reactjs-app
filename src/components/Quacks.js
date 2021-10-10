@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { gql } from 'graphql.macro';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { MAIN_USER_INFO } from '../fragments/MainUserInfo';
 import useInfiniteScroll from '../hooks/useInfiniteScroll';
 import Quack from './Quack';
@@ -33,6 +33,8 @@ function Quacks() {
     variables: { limit: PAGE_SIZE },
   });
 
+  let [quackToDelete, setQuackToDelete] = useState(null);
+
   useInfiniteScroll({
     fetchMore,
     getCursor: useCallback(() => data.feed[data.feed.length - 1].id, [data]),
@@ -43,10 +45,14 @@ function Quacks() {
       cache.evict({ id: cache.identify(deleteQuack) });
       cache.gc();
     },
+    onCompleted() {
+      setQuackToDelete(null);
+    },
   });
 
   let removeQuack = useCallback(
     (quack) => {
+      setQuackToDelete(quack);
       mutateFunction({ variables: { id: quack.id } });
     },
     [mutateFunction]
@@ -57,7 +63,7 @@ function Quacks() {
 
   return data.feed.map((quack) => (
     <div key={quack.id}>
-      <Quack quack={quack} removeQuack={removeQuack} />
+      <Quack quack={quack} removeQuack={removeQuack} isDeleting={quackToDelete === quack} />
     </div>
   ));
 }
