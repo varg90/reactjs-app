@@ -19,7 +19,7 @@ function Quack({ quack, removeQuack, isDeleting }) {
             </div>
             <div className="text-gray-500 ml-1">@{quack.user.username}</div>
             <div className="ml-1">▫</div>
-            <div className="ml-1">2 ч</div>
+            <div className="ml-1">{new Intl.DateTimeFormat().format(quack.createdAt)}</div>
           </div>
           <div>{quack.text}</div>
         </div>

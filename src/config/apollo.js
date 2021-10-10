@@ -17,5 +17,9 @@ export default function initApollo() {
         },
       },
     }),
+    headers: {
+      authorization: localStorage.getItem('authToken'),
+      user_id: localStorage.getItem('userId'),
+    },
   });
 }

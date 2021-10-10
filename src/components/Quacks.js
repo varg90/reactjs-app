@@ -18,8 +18,8 @@ const QUACKS_QUERY = gql`
     feed(cursorId: $cursorId, limit: $limit) {
       id
       text
+      createdAt
       user {
-        id
         ...MainUserInfo
       }
     }
