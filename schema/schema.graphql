@@ -18,6 +18,7 @@ type Quack {
 
 type Query {
   quacks: [Quack]
+  feed(cursorId: ID, limit: Int): [Quack!]
 }
 
 type Mutation {

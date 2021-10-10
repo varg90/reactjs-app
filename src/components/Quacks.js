@@ -1,7 +1,9 @@
 import { useMutation, useQuery } from '@apollo/client';
-import Quack from './Quack';
 import { gql } from 'graphql.macro';
+import { useCallback } from 'react';
 import { MAIN_USER_INFO } from '../fragments/MainUserInfo';
+import useInfiniteScroll from '../hooks/useInfiniteScroll';
+import Quack from './Quack';
 
 const DELETE_QUACK = gql`
   mutation deleteQuack($id: ID!) {
@@ -12,8 +14,8 @@ const DELETE_QUACK = gql`
 `;
 const QUACKS_QUERY = gql`
   ${MAIN_USER_INFO}
-  query QuacksQuery {
-    quacks {
+  query QuacksQuery($cursorId: ID, $limit: Int) {
+    feed(cursorId: $cursorId, limit: $limit) {
       id
       text
       user {
@@ -24,8 +26,17 @@ const QUACKS_QUERY = gql`
   }
 `;
 
-function Quacks(props) {
-  let { loading, error, data } = useQuery(QUACKS_QUERY);
+const PAGE_SIZE = 30;
+
+function Quacks() {
+  let { loading, error, data, fetchMore } = useQuery(QUACKS_QUERY, {
+    variables: { limit: PAGE_SIZE },
+  });
+
+  useInfiniteScroll({
+    fetchMore,
+    getCursor: useCallback(() => data.feed[data.feed.length - 1].id, [data]),
+  });
 
   let [mutateFunction] = useMutation(DELETE_QUACK, {
     update(cache, { data: { deleteQuack } }) {
@@ -34,14 +45,17 @@ function Quacks(props) {
     },
   });
 
-  let removeQuack = (quack) => {
-    mutateFunction({ variables: { id: quack.id } });
-  };
+  let removeQuack = useCallback(
+    (quack) => {
+      mutateFunction({ variables: { id: quack.id } });
+    },
+    [mutateFunction]
+  );
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
-  return data.quacks.map((quack) => (
+  return data.feed.map((quack) => (
     <div key={quack.id}>
       <Quack quack={quack} removeQuack={removeQuack} />
     </div>

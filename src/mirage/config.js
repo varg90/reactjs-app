@@ -1,5 +1,5 @@
 import { createServer, Factory, association } from 'miragejs';
-import { createGraphQLHandler } from '@miragejs/graphql';
+import { createGraphQLHandler, mirageGraphQLFieldResolver } from '@miragejs/graphql';
 import faker from 'faker';
 import { loader } from 'graphql.macro';
 const graphQLSchema = loader('./../../schema/schema.graphql');
@@ -7,11 +7,26 @@ const graphQLSchema = loader('./../../schema/schema.graphql');
 export default function createMirage() {
   createServer({
     routes() {
-      this.post('/graphql', createGraphQLHandler(graphQLSchema, this.schema));
+      const graphQLHandler = createGraphQLHandler(graphQLSchema, this.schema, {
+        resolvers: {
+          Query: {
+            feed(obj, args, context, info) {
+              const { cursorId, limit } = args;
+              delete args.cursorId;
+              delete args.limit;
+              const records = mirageGraphQLFieldResolver(obj, args, context, info);
+              let recordIndex = records.indexOf(records.find((r) => r.id === cursorId)) + 1;
+              return records.slice(recordIndex, recordIndex + limit);
+            },
+          },
+        },
+      });
+
+      this.post('/graphql', graphQLHandler);
     },
 
     seeds(server) {
-      server.createList('Quack', 30);
+      server.createList('Quack', 90);
     },
 
     factories: {

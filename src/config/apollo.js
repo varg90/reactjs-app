@@ -3,6 +3,19 @@ import { ApolloClient, InMemoryCache } from '@apollo/client';
 export default function initApollo() {
   return new ApolloClient({
     uri: 'http://localhost:3000/graphql',
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            feed: {
+              keyArgs: false,
+              merge(existing = [], incoming) {
+                return [...existing, ...incoming];
+              },
+            },
+          },
+        },
+      },
+    }),
   });
 }
