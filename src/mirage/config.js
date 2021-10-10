@@ -52,7 +52,7 @@ export default function createMirage() {
     },
 
     seeds(server) {
-      server.create('User', { username: 'yuri' });
+      server.create('User', { username: 'username' });
       server.createList('Quack', 90);
     },
 
