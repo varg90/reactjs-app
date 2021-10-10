@@ -14,15 +14,29 @@ type Quack {
   id: ID!
   text: String!
   user: User
+  createdAt: String
 }
 
 type Query {
   quacks: [Quack]
   feed(cursorId: ID, limit: Int): [Quack!]
+  me: User
+}
+
+type Error {
+  text: String
+}
+
+type AuthResponse {
+  user: User
+  authToken: String
+  errors: [Error]
 }
 
 type Mutation {
   createQuack(input: QuackInput!): Quack
   deleteQuack(id: ID!): Quack
   updateQuack(id: ID!, input: QuackInput!): Quack
+
+  authenticate(username: String, password: String): AuthResponse
 }
